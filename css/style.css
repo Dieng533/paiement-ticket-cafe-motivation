@@ -1,0 +1,27 @@
+:root {
+    --orange-goup: #e06a16;
+    --orange-goup-light: #f18c42;
+    --orange-goup-dark: #c55a12;
+    --bleu-nuit-goup: #1a1a26;
+    --bleu-nuit-light: #2a2a3a;
+}
+
+body {
+    background: var(--bleu-nuit-light);
+}
+
+.text-goup-orange { color: var(--orange-goup); }
+.text-goup-dark { color: var(--bleu-nuit-goup); }
+
+.btn-goup {
+    background: var(--orange-goup);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-goup:hover {
+    background: var(--orange-goup-light);
+    color: white;
+    transform: translateY(-2px);
+}

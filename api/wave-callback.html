@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traitement du paiement - GO'UP</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a26, #2a2a3a);
+            color: white;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 600px;
+            padding: 2rem;
+        }
+        
+        .logo {
+            height: 80px;
+            margin-bottom: 2rem;
+        }
+        
+        .status-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(224, 106, 22, 0.3);
+            border-top: 5px solid #e06a16;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 2rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        
+        .btn {
+            background: #e06a16;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        
+        .btn:hover {
+            background: #f18c42;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="../assets/images/logo.png" alt="GO'UP Logo" class="logo">
+        
+        <div class="status-card">
+            <div id="spinner" class="spinner"></div>
+            <h2 id="statusTitle">Traitement de votre paiement...</h2>
+            <p id="statusMessage">Veuillez patienter pendant que nous confirmons votre transaction.</p>
+            <div id="ticketInfo" style="display: none;">
+                <h3 class="success">Paiement confirmé !</h3>
+                <p>Référence: <strong id="ticketRef"></strong></p>
+                <p>Vous allez être redirigé vers votre ticket dans <span id="countdown">5</span> secondes.</p>
+            </div>
+            <div id="errorInfo" style="display: none;">
+                <h3 class="error">Paiement échoué</h3>
+                <p id="errorMessage"></p>
+                <a href="../index.html" class="btn">Réessayer</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Supabase - REMPLACEZ AVEC VOS INFOS
+        const SUPABASE_URL = "https://votre-projet.supabase.co";
+        const SUPABASE_ANON_KEY = "votre-cle-anon-publique";
+        
+        // Initialiser Supabase
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Fonction pour récupérer les paramètres de l'URL
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        // Simuler le traitement du callback Wave
+        async function processPaymentCallback() {
+            const ref = getUrlParameter('ref');
+            const status = getUrlParameter('status') || 'success'; // Pour la démo, on simule success
+            const transactionId = getUrlParameter('transaction_id') || 'WAVE' + Date.now();
+            
+            if (!ref) {
+                showError("Référence de ticket manquante");
+                return;
+            }
+            
+            try {
+                if (status === 'success') {
+                    // 1. Mettre à jour le statut du ticket dans Supabase
+                    const { data, error } = await supabase
+                        .from('tickets')
+                        .update({
+                            statut: 'payé',
+                            transaction_id: transactionId,
+                            date_paiement: new Date().toISOString()
+                        })
+                        .eq('reference', ref)
+                        .select();
+                    
+                    if (error) throw error;
+                    
+                    if (data && data.length > 0) {
+                        // 2. Afficher le succès
+                        document.getElementById('spinner').style.display = 'none';
+                        document.getElementById('statusTitle').textContent = 'Paiement confirmé !';
+                        document.getElementById('statusMessage').textContent = 'Votre ticket a été validé avec succès.';
+                        document.getElementById('ticketInfo').style.display = 'block';
+                        document.getElementById('ticketRef').textContent = ref;
+                        
+                        // 3. Redirection automatique
+                        let countdown = 5;
+                        const countdownEl = document.getElementById('countdown');
+                        const countdownInterval = setInterval(() => {
+                            countdown--;
+                            countdownEl.textContent = countdown;
+                            
+                            if (countdown <= 0) {
+                                clearInterval(countdownInterval);
+                                window.location.href = `../success.html?ref=${encodeURIComponent(ref)}`;
+                            }
+                        }, 1000);
+                        
+                        // 4. Option de redirection manuelle
+                        setTimeout(() => {
+                            window.location.href = `../success.html?ref=${encodeURIComponent(ref)}`;
+                        }, 5000);
+                        
+                    } else {
+                        showError("Ticket non trouvé");
+                    }
+                    
+                } else {
+                    showError("Le paiement a été annulé ou a échoué");
+                }
+                
+            } catch (error) {
+                console.error("Erreur:", error);
+                showError("Une erreur est survenue lors du traitement");
+            }
+        }
+        
+        function showError(message) {
+            document.getElementById('spinner').style.display = 'none';
+            document.getElementById('statusTitle').textContent = 'Erreur';
+            document.getElementById('statusMessage').style.display = 'none';
+            document.getElementById('errorInfo').style.display = 'block';
+            document.getElementById('errorMessage').textContent = message;
+        }
+        
+        // Démarrer le traitement au chargement
+        document.addEventListener('DOMContentLoaded', processPaymentCallback);
+    </script>
+</body>
+</html>
