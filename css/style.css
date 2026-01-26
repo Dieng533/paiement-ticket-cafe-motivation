@@ -4,24 +4,243 @@
     --orange-goup-dark: #c55a12;
     --bleu-nuit-goup: #1a1a26;
     --bleu-nuit-light: #2a2a3a;
+    --bleu-nuit-dark: #121218;
+    --blanc-creme: #f8f9fa;
 }
 
-body {
-    background: var(--bleu-nuit-light);
+/* Background gradient */
+.bg-gradient-nuit {
+    background: linear-gradient(135deg, var(--bleu-nuit-dark) 0%, var(--bleu-nuit-goup) 100%);
+    min-height: 100vh;
+    padding-top: 1rem;
+    padding-bottom: 2rem;
 }
 
-.text-goup-orange { color: var(--orange-goup); }
-.text-goup-dark { color: var(--bleu-nuit-goup); }
+/* Carte principale avec effet 3D */
+.ticket-card {
+    background: var(--blanc-creme);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+}
 
-.btn-goup {
-    background: var(--orange-goup);
-    color: white;
-    font-size: 1rem;
+.ticket-card:hover {
+    transform: translateY(-5px);
+}
+
+.shadow-3d {
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 10px 20px rgba(224, 106, 22, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Header avec gradient */
+.card-header-gradient {
+    background: linear-gradient(90deg, var(--bleu-nuit-goup) 0%, var(--bleu-nuit-light) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-header-gradient::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgb(255, 255, 255) 1px, transparent 1px);
+    background-size: 20px 20px;
+    animation: float 20s linear infinite;
+    opacity: 0.1;
+}
+
+/* Logo avec effet shine */
+.logo-container {
+    display: inline-block;
+    position: relative;
+}
+
+.logo-img {
+    max-height: 100px;
+    filter: drop-shadow(0 5px 15px rgba(255, 255, 255, 0.3));
+    position: relative;
+    z-index: 2;
+}
+
+.logo-shine {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    border-radius: 50%;
+    animation: shine 3s infinite;
+    z-index: 1;
+}
+
+/* Compte à rebours */
+.countdown-container {
+    background: rgba(224, 106, 22, 0.05);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(224, 106, 22, 0.1);
+}
+
+.countdown-display .countdown-item {
+    background: white;
+    min-width: 80px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.countdown-display .countdown-item:hover {
+    border-color: var(--orange-goup);
+    transform: translateY(-3px);
+}
+
+/* Icônes flottantes */
+.floating-icons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.floating-icon {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-left: 8px;
+    animation: floatIcon 3s ease-in-out infinite;
+}
+
+.floating-icon:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.floating-icon:nth-child(3) {
+    animation-delay: 1s;
+}
+
+/* Formulaire */
+.form-control-lg, .form-select-lg {
+    padding: 0.75rem 1rem;
+    font-size: 1.1rem;
+    border: 2px solid #e9ecef;
     transition: all 0.3s ease;
 }
 
-.btn-goup:hover {
-    background: var(--orange-goup-light);
-    color: white;
+.form-control-lg:focus, .form-select-lg:focus {
+    border-color: var(--orange-goup);
+    box-shadow: 0 0 0 0.25rem rgba(224, 106, 22, 0.25);
     transform: translateY(-2px);
 }
+
+.input-group-text {
+    background: linear-gradient(to right, #f8f9fa, #e9ecef);
+    border: 2px solid #e9ecef;
+    border-right: none;
+}
+
+/* Preview du ticket */
+.ticket-preview {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.ticket-preview:hover {
+    border-color: var(--orange-goup);
+    box-shadow: 0 5px 15px rgba(224, 106, 22, 0.1);
+}
+
+.badge.bg-goup-orange {
+    background: linear-gradient(135deg, var(--orange-goup), var(--orange-goup-light)) !important;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Bouton principal */
+.btn-goup {
+    background: linear-gradient(135deg, var(--orange-goup), var(--orange-goup-light));
+    color: white;
+    font-size: 1.1rem;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    box-shadow: 0 10px 20px rgba(224, 106, 22, 0.3);
+}
+
+.btn-goup:hover {
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(224, 106, 22, 0.4);
+}
+
+.btn-goup:active {
+    transform: translateY(-1px);
+}
+
+/* Effet pulse sur le bouton */
+.btn-pulse {
+    animation: pulse 2s infinite;
+}
+
+/* Feature items */
+.feature-item {
+    transition: transform 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+}
+
+/* Animations */
+@keyframes shine {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(20px, 20px) rotate(360deg); }
+}
+
+@keyframes floatIcon {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(224, 106, 22, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(224, 106, 22, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(224, 106, 22, 0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .countdown-display {
+        gap: 0.5rem !important;
+    }
+    
+    .countdown-item {
+        min-width: 70px !important;
+        padding: 0.75rem !important;
+    }
+    
+    .countdown-item .h2 {
+        font-size: 1.5rem;
+    }
+    
+    .logo-img {
+        max-height: 80px;
+    }
+    
+    .card-body {
+        padding: 1.5rem !important;
+    }
+}
+
+/* Styles utilitaires */
+.text-goup-orange { color: var(--orange-goup); }
+.text-goup-dark { color: var(--bleu-nuit-goup); }
+.bg-goup-orange { background-color: var(--orange-goup); }

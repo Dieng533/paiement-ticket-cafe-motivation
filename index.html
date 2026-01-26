@@ -5,40 +5,135 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Café Motivation GO'UP - Achat Ticket</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-light">
+<body class="bg-gradient-nuit">
 
 <div class="container py-5">
   <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow-lg border-0 rounded-4">
-        <div class="card-body p-4">
-          <!-- Logo -->
-          <div class="text-center mb-3">
-            <img src="assets/images/logo.png" alt="GO'UP Logo" class="img-fluid" style="max-height: 80px;">
+    <div class="col-lg-6 col-md-8">
+      <!-- Carte Principale -->
+      <div class="card ticket-card shadow-3d border-0 rounded-4 overflow-hidden">
+        <!-- Header avec gradient -->
+        <div class="card-header-gradient text-center py-4 position-relative">
+          <div class="floating-icons">
+            <i class="fas fa-star floating-icon"></i>
+            <i class="fas fa-bolt floating-icon"></i>
+            <i class="fas fa-mug-hot floating-icon"></i>
+          </div>
+          
+          <!-- Logo avec effet shine -->
+          <div class="logo-container mb-3 position-relative">
+            <div class="logo-shine"></div>
+            <img src="assets/images/logo.png" alt="GO'UP Logo" class="logo-img">
           </div>
 
-          <h3 class="text-center mb-3 text-goup-dark">🎟️ Café Motivation GO'UP</h3>
+          <h1 class="display-6 fw-bold text-white mb-2">Café Motivation <span class="text-warning">GO'UP</span></h1>
+          <p class="text-light mb-0 opacity-75">Réservez votre place pour l'événement inspirant</p>
+        </div>
 
-          <!-- Countdown -->
-          <div class="text-center mb-4">
-            <span id="countdown" class="h5 text-goup-orange"></span>
+        <div class="card-body p-4 p-md-5">
+          <!-- Compte à rebours stylisé -->
+          <div class="countdown-container text-center mb-4">
+            <p class="text-uppercase small fw-semibold text-goup-orange mb-2">
+              <i class="fas fa-clock me-2"></i>Début dans
+            </p>
+            <div id="countdown" class="countdown-display d-flex justify-content-center gap-2 gap-md-3">
+              <!-- Rempli dynamiquement par JS -->
+            </div>
           </div>
 
-          <!-- Formulaire -->
-          <input type="text" id="nom" class="form-control mb-3 rounded-pill" placeholder="Nom complet">
-          <input type="tel" id="telephone" class="form-control mb-3 rounded-pill" placeholder="Téléphone">
+          <!-- Formulaire amélioré -->
+          <div class="form-container">
+            <div class="mb-4">
+              <label for="nom" class="form-label fw-semibold text-goup-dark">
+                <i class="fas fa-user me-2"></i>Nom complet
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-user text-goup-orange"></i>
+                </span>
+                <input type="text" id="nom" class="form-control form-control-lg border-start-0 ps-0" 
+                       placeholder="Votre nom complet">
+              </div>
+            </div>
 
-          <select id="type_ticket" class="form-select mb-3 rounded-pill">
-            <option value="DOSE">Dose – 3 000 F CFA</option>
-            <option value="VIP">VIP – 5 000 F CFA</option>
-            <option value="VVIP">VVIP – 10 000 F CFA</option>
-          </select>
+            <div class="mb-4">
+              <label for="telephone" class="form-label fw-semibold text-goup-dark">
+                <i class="fas fa-phone me-2"></i>Téléphone
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-phone text-goup-orange"></i>
+                </span>
+                <input type="tel" id="telephone" class="form-control form-control-lg border-start-0 ps-0" 
+                       placeholder="Votre numéro de téléphone">
+              </div>
+            </div>
 
-          <button class="btn btn-goup w-100 rounded-pill fw-bold py-2" id="payer">
-            Payer avec Wave
-          </button>
+            <!-- Sélecteur de ticket avec carte d'aperçu -->
+            <div class="mb-4">
+              <label for="type_ticket" class="form-label fw-semibold text-goup-dark">
+                <i class="fas fa-ticket-alt me-2"></i>Type de ticket
+              </label>
+              <select id="type_ticket" class="form-select form-select-lg rounded-3">
+                <option value="DOSE">Dose – 3 000 F CFA</option>
+                <option value="VIP">VIP – 5 000 F CFA</option>
+                <option value="VVIP">VVIP – 10 000 F CFA</option>
+              </select>
+              
+              <!-- Aperçu du ticket sélectionné -->
+              <div class="ticket-preview mt-3 p-3 rounded-3 bg-light border" id="ticketPreview">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="fw-bold mb-1 text-goup-dark" id="ticketName">Dose</h6>
+                    <p class="mb-0 text-muted small" id="ticketDesc">Accès standard à l'événement</p>
+                  </div>
+                  <span class="badge bg-goup-orange px-3 py-2" id="ticketPrice">3 000 F CFA</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bouton de paiement amélioré -->
+            <button class="btn btn-goup w-100 rounded-3 fw-bold py-3 mt-2 btn-pulse" id="payer">
+              <i class="fas fa-bolt me-2"></i>
+              <span class="btn-text">Payer avec Wave</span>
+              <i class="fas fa-arrow-right ms-2"></i>
+            </button>
+            
+            <!-- Garantie de sécurité -->
+            <div class="text-center mt-4">
+              <p class="text-muted small">
+                <i class="fas fa-shield-alt me-2 text-success"></i>
+                Paiement sécurisé • Aucun frais caché • Support 24/7
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Footer avec info supplémentaire -->
+        <div class="card-footer bg-light text-center py-3 border-top">
+          <div class="row">
+            <div class="col-4">
+              <div class="feature-item">
+                <i class="fas fa-calendar-check text-goup-orange h5 mb-2"></i>
+                <p class="small mb-0 text-goup-dark">14 Février 2026</p>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="feature-item">
+                <i class="fas fa-map-marker-alt text-goup-orange h5 mb-2"></i>
+                <p class="small mb-0 text-goup-dark">17h00</p>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="feature-item">
+                <i class="fas fa-users text-goup-orange h5 mb-2"></i>
+                <p class="small mb-0 text-goup-dark">Places limitées</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -48,17 +143,20 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="js/app.js"></script>
 <script>
-  // Countdown jusqu'au 14 février 2026 17h00
+  // Countdown amélioré
   const countdownDate = new Date("Feb 14, 2026 17:00:00").getTime();
-
   const countdownEl = document.getElementById("countdown");
-  const countdownInterval = setInterval(() => {
+
+  function updateCountdown() {
     const now = new Date().getTime();
     const distance = countdownDate - now;
 
     if(distance < 0){
-      clearInterval(countdownInterval);
-      countdownEl.innerHTML = "L'événement a commencé !";
+      countdownEl.innerHTML = `
+        <div class="countdown-item bg-success text-white rounded-3 p-3">
+          <div class="h3 mb-0">Événement en cours</div>
+        </div>
+      `;
       return;
     }
 
@@ -67,8 +165,58 @@
     const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
     const seconds = Math.floor((distance % (1000*60)) / 1000);
 
-    countdownEl.innerHTML = `${days}j ${hours}h ${minutes}m ${seconds}s`;
-  }, 1000);
+    countdownEl.innerHTML = `
+      <div class="countdown-item rounded-3 p-3">
+        <div class="h2 fw-bold text-goup-dark">${days}</div>
+        <div class="small text-muted">Jours</div>
+      </div>
+      <div class="countdown-item rounded-3 p-3">
+        <div class="h2 fw-bold text-goup-dark">${hours}</div>
+        <div class="small text-muted">Heures</div>
+      </div>
+      <div class="countdown-item rounded-3 p-3">
+        <div class="h2 fw-bold text-goup-dark">${minutes}</div>
+        <div class="small text-muted">Minutes</div>
+      </div>
+      <div class="countdown-item rounded-3 p-3">
+        <div class="h2 fw-bold text-goup-dark">${seconds}</div>
+        <div class="small text-muted">Secondes</div>
+      </div>
+    `;
+  }
+
+  // Mise à jour du preview du ticket
+  const ticketSelect = document.getElementById('type_ticket');
+  const ticketPreview = {
+    'DOSE': { name: 'Dose', desc: 'Accès standard à l\'événement', price: '3 000 F CFA' },
+    'VIP': { name: 'VIP', desc: 'Accès VIP + Goodies exclusifs', price: '5 000 F CFA' },
+    'VVIP': { name: 'VVIP', desc: 'Accès VVIP + Rencontre speakers', price: '10 000 F CFA' }
+  };
+
+  function updateTicketPreview() {
+    const selected = ticketSelect.value;
+    const ticket = ticketPreview[selected];
+    
+    document.getElementById('ticketName').textContent = ticket.name;
+    document.getElementById('ticketDesc').textContent = ticket.desc;
+    document.getElementById('ticketPrice').textContent = ticket.price;
+  }
+
+  // Initialisation
+  updateCountdown();
+  updateTicketPreview();
+  setInterval(updateCountdown, 1000);
+  
+  ticketSelect.addEventListener('change', updateTicketPreview);
+  
+  // Effet sur le bouton de paiement
+  const payerBtn = document.getElementById('payer');
+  payerBtn.addEventListener('mouseenter', function() {
+    this.querySelector('.btn-text').textContent = 'Payer maintenant !';
+  });
+  payerBtn.addEventListener('mouseleave', function() {
+    this.querySelector('.btn-text').textContent = 'Payer avec Wave';
+  });
 </script>
 </body>
 </html>
