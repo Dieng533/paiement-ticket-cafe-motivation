@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Traitement du paiement - GO'UP</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -96,6 +97,13 @@
     </div>
 
     <script>
+        // Configuration Supabase - REMPLACEZ AVEC VOS INFOS
+        const SUPABASE_URL = "https://votre-projet.supabase.co";
+        const SUPABASE_ANON_KEY = "votre-cle-anon-publique";
+        
+        // Initialiser Supabase
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         // Fonction pour récupérer les paramètres de l'URL
         function getUrlParameter(name) {
             name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -104,39 +112,69 @@
             return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
         
-        // Traitement du callback Wave (sans backend)
-        function processPaymentCallback() {
-            const status = getUrlParameter('status') || 'success'; // Wave doit renvoyer ?status=success
-            const ref = getUrlParameter('ref') || '';
-
-            if (status === 'success') {
-                // Afficher le succès
-                document.getElementById('spinner').style.display = 'none';
-                document.getElementById('statusTitle').textContent = 'Paiement confirmé !';
-                document.getElementById('statusMessage').textContent = 'Votre paiement Wave a été confirmé.';
-                document.getElementById('ticketInfo').style.display = 'block';
-                document.getElementById('ticketRef').textContent = ref || 'Votre ticket GO\'UP';
-
-                // Compte à rebours avant redirection vers la page du ticket
-                let countdown = 5;
-                const countdownEl = document.getElementById('countdown');
-                const countdownInterval = setInterval(() => {
-                    countdown--;
-                    countdownEl.textContent = countdown;
-
-                    if (countdown <= 0) {
-                        clearInterval(countdownInterval);
-                        window.location.href = '../success.html';
+        // Simuler le traitement du callback Wave
+        async function processPaymentCallback() {
+            const ref = getUrlParameter('ref');
+            const status = getUrlParameter('status') || 'success'; // Pour la démo, on simule success
+            const transactionId = getUrlParameter('transaction_id') || 'WAVE' + Date.now();
+            
+            if (!ref) {
+                showError("Référence de ticket manquante");
+                return;
+            }
+            
+            try {
+                if (status === 'success') {
+                    // 1. Mettre à jour le statut du ticket dans Supabase
+                    const { data, error } = await supabase
+                        .from('tickets')
+                        .update({
+                            statut: 'payé',
+                            transaction_id: transactionId,
+                            date_paiement: new Date().toISOString()
+                        })
+                        .eq('reference', ref)
+                        .select();
+                    
+                    if (error) throw error;
+                    
+                    if (data && data.length > 0) {
+                        // 2. Afficher le succès
+                        document.getElementById('spinner').style.display = 'none';
+                        document.getElementById('statusTitle').textContent = 'Paiement confirmé !';
+                        document.getElementById('statusMessage').textContent = 'Votre ticket a été validé avec succès.';
+                        document.getElementById('ticketInfo').style.display = 'block';
+                        document.getElementById('ticketRef').textContent = ref;
+                        
+                        // 3. Redirection automatique
+                        let countdown = 5;
+                        const countdownEl = document.getElementById('countdown');
+                        const countdownInterval = setInterval(() => {
+                            countdown--;
+                            countdownEl.textContent = countdown;
+                            
+                            if (countdown <= 0) {
+                                clearInterval(countdownInterval);
+                                window.location.href = `../success.html?ref=${encodeURIComponent(ref)}`;
+                            }
+                        }, 1000);
+                        
+                        // 4. Option de redirection manuelle
+                        setTimeout(() => {
+                            window.location.href = `../success.html?ref=${encodeURIComponent(ref)}`;
+                        }, 5000);
+                        
+                    } else {
+                        showError("Ticket non trouvé");
                     }
-                }, 1000);
-
-                // Sécurité : redirection au bout de 5 secondes même si le setInterval est interrompu
-                setTimeout(() => {
-                    window.location.href = '../success.html';
-                }, 5000);
-
-            } else {
-                showError("Le paiement a été annulé ou a échoué");
+                    
+                } else {
+                    showError("Le paiement a été annulé ou a échoué");
+                }
+                
+            } catch (error) {
+                console.error("Erreur:", error);
+                showError("Une erreur est survenue lors du traitement");
             }
         }
         

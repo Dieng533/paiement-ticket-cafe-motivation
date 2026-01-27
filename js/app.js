@@ -31,11 +31,28 @@ $(document).ready(function() {
         const total = prix * quantite;
 
         // Sauvegarde du ticket dans localStorage via notre "API" (tickets.js)
-        saveTicket({ nom, tel, type_ticket, prix, quantite, total });
+        const ticket = saveTicket({ nom, tel, type_ticket, prix, quantite, total });
 
-        // Redirection vers la page de paiement Wave
-        // (Configure dans ton compte Wave l'URL de retour vers api/wave-callback.html)
-        const wave_link = "https://pay.wave.com/m/M_sn_CSkOL0l-YzKN/c/sn/";
-        window.location.href = wave_link;
+        // Notification immédiate à l'administrateur sur WhatsApp
+        const adminPhone = "221784953056"; // +221 78 495 30 56
+        const whatsappMessage = `
+Bonjour GO'UP 👋
+
+Nouvel achat de ticket pour *Café Motivation GO'UP* ☕🔥
+
+Nom : ${ticket.nom}
+Téléphone client : ${ticket.tel}
+Type de ticket : ${ticket.type_ticket}
+Quantité : ${ticket.quantite}
+Total à payer : ${ticket.total} FCFA
+Référence : ${ticket.numero_ticket}
+
+Merci 🙏
+        `;
+        const whatsappUrl = `https://wa.me/${adminPhone}?text=${encodeURIComponent(whatsappMessage)}`;
+        window.open(whatsappUrl, "_blank");
+
+        // Redirection vers la page de confirmation du ticket (100 % local)
+        window.location.href = "success.html";
     });
 });
