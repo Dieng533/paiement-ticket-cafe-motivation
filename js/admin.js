@@ -12,7 +12,10 @@ function renderTickets(){
           <td>${t.nom}</td>
           <td>${t.tel}</td>
           <td>${t.type_ticket}</td>
-          <td>${t.prix} F</td>
+          <td>
+            ${t.quantite ? `${t.quantite} x ${t.prix} F` : `${t.prix} F`}
+            ${t.total ? `<br><small>Total: ${t.total} F</small>` : ""}
+          </td>
           <td>
             <span class="badge ${t.statut === "VALIDÉ" ? "badge-valid" : "badge-non"}">
               ${t.statut}

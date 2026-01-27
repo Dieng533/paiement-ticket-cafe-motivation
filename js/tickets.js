@@ -15,6 +15,8 @@ function saveTicket(data) {
         tel: data.tel,
         type_ticket: data.type_ticket,
         prix: data.prix,
+        quantite: data.quantite || 1,
+        total: data.total || data.prix,
         statut: "NON VALIDÉ",
         date: new Date().toLocaleString("fr-FR")
     };
@@ -22,4 +24,7 @@ function saveTicket(data) {
     tickets.push(ticket);
     localStorage.setItem("tickets", JSON.stringify(tickets));
     localStorage.setItem("lastTicket", JSON.stringify(ticket));
+
+    // Retourner le ticket créé pour pouvoir l'utiliser (WhatsApp, affichage, etc.)
+    return ticket;
 }

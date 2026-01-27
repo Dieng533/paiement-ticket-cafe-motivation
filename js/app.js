@@ -9,21 +9,32 @@ $(document).ready(function() {
         const nom = $("#nom").val();
         const tel = $("#telephone").val();
         const type_ticket = $("#type_ticket").val();
-        const prix = tickets.find(t => t.type === type_ticket).prix;
+        const quantite = parseInt($("#quantite").val(), 10) || 1;
+        const ticketInfo = tickets.find(t => t.type === type_ticket);
 
-        if(!nom || !tel) {
+        if (!nom || !tel) {
             alert("Veuillez remplir tous les champs !");
             return;
         }
 
-        // Générer référence unique
-        const reference = "TCK-" + Date.now();
+        if (!ticketInfo) {
+            alert("Type de ticket invalide");
+            return;
+        }
 
-        // Stocker le ticket dans localStorage
-        const ticket = { nom, tel, type_ticket, prix, reference };
-        localStorage.setItem('lastTicket', JSON.stringify(ticket));
+        if (quantite < 1) {
+            alert("La quantité doit être au minimum 1.");
+            return;
+        }
 
-        // Redirection vers le lien Wave marchand
+        const prix = ticketInfo.prix;
+        const total = prix * quantite;
+
+        // Sauvegarde du ticket dans localStorage via notre "API" (tickets.js)
+        saveTicket({ nom, tel, type_ticket, prix, quantite, total });
+
+        // Redirection vers la page de paiement Wave
+        // (Configure dans ton compte Wave l'URL de retour vers api/wave-callback.html)
         const wave_link = "https://pay.wave.com/m/M_sn_CSkOL0l-YzKN/c/sn/";
         window.location.href = wave_link;
     });
