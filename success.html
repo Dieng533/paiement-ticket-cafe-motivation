@@ -9,11 +9,23 @@
 <body class="bg-light">
 
 <div class="container mt-5">
-  <div class="card shadow p-4 text-center">
-    <h4 class="mb-4">🎫 Votre Ticket</h4>
-    <div id="ticket-info"></div>
-    <button class="btn btn-primary mt-3" onclick="window.print()">Imprimer le ticket</button>
+ <div class="card shadow-lg p-4 text-center rounded-4">
+  <h4 class="mb-3">🎫 Votre Ticket – Café Motivation GO'UP</h4>
+
+  <div id="ticket-info" class="mb-4"></div>
+
+  <div class="d-grid gap-2">
+    <button class="btn btn-success btn-lg" id="whatsappBtn">
+      <i class="fab fa-whatsapp me-2"></i>
+      Confirmer sur WhatsApp
+    </button>
+
+    <button class="btn btn-outline-secondary" onclick="window.print()">
+      Imprimer le ticket
+    </button>
   </div>
+</div>
+
 </div>
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
@@ -21,25 +33,47 @@
 <script>
 $(document).ready(function(){
     const ticket = JSON.parse(localStorage.getItem('lastTicket'));
+
     if(!ticket) {
         $("#ticket-info").html("<p class='text-danger'>Aucun ticket trouvé !</p>");
         return;
     }
 
     $("#ticket-info").html(`
-        <p><strong>Nom:</strong> ${ticket.nom}</p>
-        <p><strong>Téléphone:</strong> ${ticket.tel}</p>
-        <p><strong>Type de ticket:</strong> ${ticket.type_ticket}</p>
-        <p><strong>Montant:</strong> ${ticket.prix} F CFA</p>
-        <p><strong>Référence:</strong> ${ticket.reference}</p>
-        <canvas id="qrcode"></canvas>
+        <p><strong>Nom :</strong> ${ticket.nom}</p>
+        <p><strong>Téléphone :</strong> ${ticket.tel}</p>
+        <p><strong>Ticket :</strong> ${ticket.type_ticket}</p>
+        <p><strong>Montant :</strong> ${ticket.prix} F CFA</p>
+        <p><strong>Référence :</strong> ${ticket.reference}</p>
+        <canvas id="qrcode" class="my-3"></canvas>
     `);
 
-    // Générer QR Code
-    var qr = new QRious({
+    // QR Code
+    new QRious({
         element: document.getElementById('qrcode'),
         value: ticket.reference,
         size: 150
+    });
+
+    // WhatsApp confirmation
+    $("#whatsappBtn").click(function(){
+        const message = `
+Bonjour GO'UP 👋
+
+Je confirme mon achat de ticket pour *Café Motivation GO'UP* ☕🔥
+
+Nom : ${ticket.nom}
+Téléphone : ${ticket.tel}
+Ticket : ${ticket.type_ticket}
+Montant : ${ticket.prix} FCFA
+Référence : ${ticket.reference}
+
+Merci 🙏
+        `;
+
+        const phone = "221784953056";
+        const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+        window.open(url, "_blank");
     });
 });
 </script>

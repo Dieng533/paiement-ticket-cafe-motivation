@@ -1,296 +1,53 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Tickets GO'UP</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        .admin-container { margin-top: 80px; }
-        .stats-card { background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 20px; }
-        .table-hover tbody tr:hover { background: rgba(224, 106, 22, 0.1); }
-        .badge-en_attente { background: #ffc107; }
-        .badge-payé { background: #28a745; }
-        .badge-annulé { background: #dc3545; }
-    </style>
+<meta charset="UTF-8">
+<title>Admin – Café Motivation GO'UP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+:root{
+  --orange:#e06a16;
+  --bleu:#1a1a26;
+}
+body{background:#f5f5f5;}
+.badge-valid{background:#28a745;}
+.badge-non{background:#dc3545;}
+</style>
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-lg fixed-top navbar-dark">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="index.html">
-                <img src="assets/images/logo.png" alt="GO'UP Logo" class="nav-logo me-2">
-                <span class="fw-bold">GO'UP Admin</span>
-            </a>
-            <button class="btn btn-goup ms-auto" id="refreshBtn">
-                <i class="fas fa-sync-alt me-2"></i>Rafraîchir
-            </button>
-        </div>
-    </nav>
 
-    <div class="container admin-container">
-        <h1 class="mb-4"><i class="fas fa-ticket-alt me-2"></i>Gestion des Tickets</h1>
-        
-        <!-- Statistiques -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="stats-card">
-                    <h6 class="text-muted">Total Tickets</h6>
-                    <h2 id="totalTickets">0</h2>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stats-card">
-                    <h6 class="text-muted">Payés</h6>
-                    <h2 id="paidTickets" class="text-success">0</h2>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stats-card">
-                    <h6 class="text-muted">En attente</h6>
-                    <h2 id="pendingTickets" class="text-warning">0</h2>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="stats-card">
-                    <h6 class="text-muted">Revenus</h6>
-                    <h2 id="revenue">0 F CFA</h2>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Tableau des tickets -->
-        <div class="card shadow-lg border-0 rounded-4">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover" id="ticketsTable">
-                        <thead>
-                            <tr>
-                                <th>Référence</th>
-                                <th>Nom</th>
-                                <th>Téléphone</th>
-                                <th>Type</th>
-                                <th>Prix</th>
-                                <th>Statut</th>
-                                <th>Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ticketsBody">
-                            <!-- Les tickets seront chargés ici -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+<nav class="navbar navbar-dark" style="background:var(--bleu)">
+  <div class="container">
+    <span class="navbar-brand">Admin – Café Motivation GO'UP</span>
+  </div>
+</nav>
 
-    <script>
-        // Configuration Supabase
-        const SUPABASE_URL = "https://votre-projet.supabase.co";
-        const SUPABASE_ANON_KEY = "votre-cle-anon-publique";
-        
-        // Initialiser Supabase
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        // Charger les tickets
-        async function loadTickets() {
-            try {
-                const { data, error } = await supabase
-                    .from('tickets')
-                    .select('*')
-                    .order('date_creation', { ascending: false });
-                
-                if (error) throw error;
-                
-                updateStats(data);
-                displayTickets(data);
-                
-            } catch (error) {
-                console.error("Erreur:", error);
-                alert("Erreur de chargement des tickets");
-            }
-        }
-        
-        // Mettre à jour les statistiques
-        function updateStats(tickets) {
-            const total = tickets.length;
-            const paid = tickets.filter(t => t.statut === 'payé').length;
-            const pending = tickets.filter(t => t.statut === 'en_attente').length;
-            const revenue = tickets
-                .filter(t => t.statut === 'payé')
-                .reduce((sum, t) => sum + (t.prix || 0), 0);
-            
-            document.getElementById('totalTickets').textContent = total;
-            document.getElementById('paidTickets').textContent = paid;
-            document.getElementById('pendingTickets').textContent = pending;
-            document.getElementById('revenue').textContent = revenue.toLocaleString('fr-FR') + ' F CFA';
-        }
-        
-        // Afficher les tickets dans le tableau
-        function displayTickets(tickets) {
-            const tbody = document.getElementById('ticketsBody');
-            tbody.innerHTML = '';
-            
-            tickets.forEach(ticket => {
-                const row = document.createElement('tr');
-                
-                // Formater la date
-                const date = new Date(ticket.date_creation);
-                const formattedDate = date.toLocaleDateString('fr-FR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
-                // Déterminer la classe du badge selon le statut
-                let badgeClass = 'badge-en_attente';
-                if (ticket.statut === 'payé') badgeClass = 'badge-payé';
-                if (ticket.statut === 'annulé') badgeClass = 'badge-annulé';
-                
-                row.innerHTML = `
-                    <td><strong>${ticket.reference}</strong></td>
-                    <td>${ticket.nom}</td>
-                    <td>${ticket.telephone}</td>
-                    <td>${ticket.type_ticket}</td>
-                    <td>${ticket.prix?.toLocaleString('fr-FR')} F CFA</td>
-                    <td>
-                        <span class="badge ${badgeClass}">${ticket.statut}</span>
-                    </td>
-                    <td>${formattedDate}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary" onclick="viewTicket('${ticket.reference}')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-success" onclick="markAsPaid('${ticket.reference}')">
-                            <i class="fas fa-check"></i>
-                        </button>
-                    </td>
-                `;
-                
-                tbody.appendChild(row);
-            });
-        }
-        
-        // Voir les détails d'un ticket
-        async function viewTicket(reference) {
-            try {
-                const { data, error } = await supabase
-                    .from('tickets')
-                    .select('*')
-                    .eq('reference', reference)
-                    .single();
-                
-                if (error) throw error;
-                
-                alert(`
-                    Détails du ticket:
-                    
-                    Référence: ${data.reference}
-                    Nom: ${data.nom}
-                    Téléphone: ${data.telephone}
-                    Type: ${data.type_ticket}
-                    Prix: ${data.prix} F CFA
-                    Statut: ${data.statut}
-                    Date création: ${new Date(data.date_creation).toLocaleString('fr-FR')}
-                    ${data.date_paiement ? `Date paiement: ${new Date(data.date_paiement).toLocaleString('fr-FR')}` : ''}
-                    ${data.transaction_id ? `Transaction ID: ${data.transaction_id}` : ''}
-                `);
-                
-            } catch (error) {
-                console.error("Erreur:", error);
-            }
-        }
-        
-        // Marquer comme payé
-        async function markAsPaid(reference) {
-            if (!confirm("Marquer ce ticket comme payé ?")) return;
-            
-            try {
-                const { error } = await supabase
-                    .from('tickets')
-                    .update({
-                        statut: 'payé',
-                        date_paiement: new Date().toISOString()
-                    })
-                    .eq('reference', reference);
-                
-                if (error) throw error;
-                
-                alert("Ticket marqué comme payé !");
-                loadTickets(); // Recharger la liste
-                
-            } catch (error) {
-                console.error("Erreur:", error);
-                alert("Erreur lors de la mise à jour");
-            }
-        }
-        
-        // Exporter les tickets en CSV
-        async function exportToCSV() {
-            try {
-                const { data, error } = await supabase
-                    .from('tickets')
-                    .select('*');
-                
-                if (error) throw error;
-                
-                if (data.length === 0) {
-                    alert("Aucun ticket à exporter");
-                    return;
-                }
-                
-                // Créer le contenu CSV
-                const headers = ['Référence', 'Nom', 'Téléphone', 'Type', 'Prix', 'Statut', 'Date création', 'Date paiement'];
-                const csvRows = [
-                    headers.join(','),
-                    ...data.map(t => [
-                        t.reference,
-                        `"${t.nom}"`,
-                        t.telephone,
-                        t.type_ticket,
-                        t.prix,
-                        t.statut,
-                        new Date(t.date_creation).toLocaleString('fr-FR'),
-                        t.date_paiement ? new Date(t.date_paiement).toLocaleString('fr-FR') : ''
-                    ].join(','))
-                ];
-                
-                const csvContent = csvRows.join('\n');
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `tickets-goup-${new Date().toISOString().split('T')[0]}.csv`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-            } catch (error) {
-                console.error("Erreur:", error);
-                alert("Erreur lors de l'export");
-            }
-        }
-        
-        // Ajouter un bouton d'export
-        document.addEventListener('DOMContentLoaded', () => {
-            const exportBtn = document.createElement('button');
-            exportBtn.className = 'btn btn-goup ms-2';
-            exportBtn.innerHTML = '<i class="fas fa-download me-2"></i>Exporter CSV';
-            exportBtn.onclick = exportToCSV;
-            document.querySelector('.navbar .container').appendChild(exportBtn);
-        });
-        
-        // Rafraîchir les données
-        document.getElementById('refreshBtn').addEventListener('click', loadTickets);
-        
-        // Charger les tickets au démarrage
-        document.addEventListener('DOMContentLoaded', loadTickets);
-    </script>
+<div class="container my-4">
+  <h4 class="mb-3">🎟️ Liste des tickets</h4>
+
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>#</th>
+          <th>Numéro</th>
+          <th>Nom</th>
+          <th>Téléphone</th>
+          <th>Type</th>
+          <th>Montant</th>
+          <th>Statut</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="ticketsTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<script src="assets/js/admin.js"></script>
 </body>
 </html>
