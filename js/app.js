@@ -24,7 +24,7 @@ $(document).ready(function() {
         localStorage.setItem('lastTicket', JSON.stringify(ticket));
 
         // Redirection vers le lien Wave marchand
-        const wave_link = "https://pay.wave.com/m/M_sn_mw86fQUtQu1n/c/sn/";
+        const wave_link = "https://pay.wave.com/m/M_sn_CSkOL0l-YzKN/c/sn/";
         window.location.href = wave_link;
     });
 });
