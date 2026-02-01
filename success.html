@@ -136,10 +136,13 @@ $(function(){
     return;
   }
 
+  const typeLabels = { DOSE: "Dose", VIP: "VIP", VVIP: "VVIP", SOFT_SKILLS: "Formation Soft Skills (13 fév. + Café 14 fév.)" };
+  const typeLabel = typeLabels[ticket.type_ticket] || ticket.type_ticket;
+
   $("#ticket-info").html(`
     <div class="ticket-row"><span>Nom</span><strong>${ticket.nom}</strong></div>
     <div class="ticket-row"><span>Téléphone</span><strong>${ticket.tel}</strong></div>
-    <div class="ticket-row"><span>Ticket</span><strong>${ticket.type_ticket}</strong></div>
+    <div class="ticket-row"><span>Ticket</span><strong>${typeLabel}</strong></div>
     <div class="ticket-row"><span>Quantité</span><strong>${ticket.quantite}</strong></div>
     <div class="ticket-row"><span>Total</span><strong>${ticket.total} FCFA</strong></div>
 
@@ -164,7 +167,7 @@ Paiement Wave effectué pour Café Motivation ☕🔥
 
 Nom : ${ticket.nom}
 Téléphone : ${ticket.tel}
-Ticket : ${ticket.type_ticket}
+Ticket : ${typeLabel}
 Quantité : ${ticket.quantite}
 Montant : ${ticket.total} FCFA
 Numéro : ${ticket.numero_ticket}

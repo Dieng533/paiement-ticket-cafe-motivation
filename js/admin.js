@@ -119,7 +119,7 @@
     t.type_ticket = document.getElementById("editType").value;
     t.quantite = parseInt(document.getElementById("editQuantite").value, 10) || 1;
     t.statut = document.getElementById("editStatut").value;
-    var prixUnitaire = { DOSE: 3000, VIP: 5000, VVIP: 10000 }[t.type_ticket] || 3000;
+    var prixUnitaire = { DOSE: 3000, VIP: 5000, VVIP: 10000, SOFT_SKILLS: 10000 }[t.type_ticket] || 3000;
     t.prix = prixUnitaire;
     t.total = t.prix * t.quantite;
     setTickets(tickets);

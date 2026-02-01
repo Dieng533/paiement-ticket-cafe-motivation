@@ -102,6 +102,7 @@
                 <option value="DOSE">Dose – 3 000 F CFA</option>
                 <option value="VIP">VIP – 5 000 F CFA</option>
                 <option value="VVIP">VVIP – 10 000 F CFA</option>
+                <option value="SOFT_SKILLS">Formation Soft Skills – 10 000 F CFA (13 fév. + Café 14 fév.)</option>
               </select>
               
               <!-- Aperçu du ticket sélectionné -->
@@ -113,6 +114,14 @@
                   </div>
                   <span class="badge bg-goup-orange px-3 py-2" id="ticketPrice">3 000 F CFA</span>
                 </div>
+              </div>
+
+              <!-- Explication Formation Soft Skills (affiché uniquement si ce type est sélectionné) -->
+              <div id="softSkillsExplanation" class="mt-3 p-3 rounded-3 border border-goup-orange bg-white d-none" style="border-color: var(--goup-orange, #e06a16) !important;">
+                <h6 class="fw-semibold text-goup-dark mb-2"><i class="fas fa-graduation-cap me-2 text-goup-orange"></i>Formation Soft Skills</h6>
+                <p class="small text-muted mb-0">
+                  Ce ticket vous donne accès à la <strong>formation Soft Skills du 13 février</strong> (compétences relationnelles, communication, travail en équipe) et au <strong>Café Motivation du 14 février 2026</strong>. Une seule inscription pour les deux événements GO'UP.
+                </p>
               </div>
             </div>
 
@@ -215,7 +224,8 @@
   const ticketPreview = {
     'DOSE': { name: 'Dose', desc: 'Accès standard à l\'événement', price: '3 000 F CFA' },
     'VIP': { name: 'VIP', desc: 'Accès VIP', price: '5 000 F CFA' },
-    'VVIP': { name: 'VVIP', desc: 'Accès VVIP + Rencontre speakers', price: '10 000 F CFA' }
+    'VVIP': { name: 'VVIP', desc: 'Accès VVIP + Rencontre speakers', price: '10 000 F CFA' },
+    'SOFT_SKILLS': { name: 'Formation Soft Skills', desc: 'Formation 13 fév. + Café Motivation 14 fév. 2026', price: '10 000 F CFA' }
   };
 
   function updateTicketPreview() {
@@ -232,13 +242,20 @@
     // Affichage du total estimé sous le prix (pour Wave)
     let totalText = "";
     if (quantite > 1) {
-      const prixUnitaire = selected === "DOSE" ? 3000 : selected === "VIP" ? 5000 : 10000;
+      const prixMap = { DOSE: 3000, VIP: 5000, VVIP: 10000, SOFT_SKILLS: 10000 };
+      const prixUnitaire = prixMap[selected] || 3000;
       const total = prixUnitaire * quantite;
       totalText = ` (Total: ${total.toLocaleString('fr-FR')} F CFA pour ${quantite} tickets)`;
     }
 
     // Ajouter le total dans la description
     document.getElementById('ticketDesc').textContent = ticket.desc + totalText;
+
+    // Afficher / masquer l'explication Formation Soft Skills
+    const softSkillsBlock = document.getElementById('softSkillsExplanation');
+    if (softSkillsBlock) {
+      softSkillsBlock.classList.toggle('d-none', selected !== 'SOFT_SKILLS');
+    }
   }
 
   // Initialisation

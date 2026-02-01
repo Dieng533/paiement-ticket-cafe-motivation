@@ -2,7 +2,8 @@ $(document).ready(function() {
     const tickets = [
         { type: "DOSE", prix: 3000 },
         { type: "VIP", prix: 5000 },
-        { type: "VVIP", prix: 10000 }
+        { type: "VVIP", prix: 10000 },
+        { type: "SOFT_SKILLS", prix: 10000 }
     ];
 
     $("#payer").click(function() {
