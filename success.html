@@ -110,10 +110,6 @@ body{
     <canvas id="waveQR" class="mb-3"></canvas>
 
     <div class="d-grid gap-2">
-      <button class="btn btn-success" id="whatsappBtn">
-        <i class="fab fa-whatsapp me-1"></i> Confirmer WhatsApp
-      </button>
-
       <button class="btn btn-outline-secondary" onclick="window.print()">
         <i class="fas fa-print me-1"></i> Imprimer
       </button>
@@ -157,22 +153,6 @@ $(function(){
     element: document.getElementById("waveQR"),
     value: waveUrl,
     size:140
-  });
-
-  $("#whatsappBtn").click(function(){
-    const msg = `
-Bonjour GO'UP 👋
-
-Paiement Wave effectué pour Café Motivation ☕🔥
-
-Nom : ${ticket.nom}
-Téléphone : ${ticket.tel}
-Ticket : ${typeLabel}
-Quantité : ${ticket.quantite}
-Montant : ${ticket.total} FCFA
-Numéro : ${ticket.numero_ticket}
-    `;
-    window.open(`https://wa.me/221784953056?text=${encodeURIComponent(msg)}`,"_blank");
   });
 
 });

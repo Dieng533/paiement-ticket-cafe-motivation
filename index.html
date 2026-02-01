@@ -115,14 +115,6 @@
                   <span class="badge bg-goup-orange px-3 py-2" id="ticketPrice">3 000 F CFA</span>
                 </div>
               </div>
-
-              <!-- Explication Formation Soft Skills (affiché uniquement si ce type est sélectionné) -->
-              <div id="softSkillsExplanation" class="mt-3 p-3 rounded-3 border border-goup-orange bg-white d-none" style="border-color: var(--goup-orange, #e06a16) !important;">
-                <h6 class="fw-semibold text-goup-dark mb-2"><i class="fas fa-graduation-cap me-2 text-goup-orange"></i>Formation Soft Skills</h6>
-                <p class="small text-muted mb-0">
-                  Ce ticket vous donne accès à la <strong>formation Soft Skills du 13 février</strong> (compétences relationnelles, communication, travail en équipe) et au <strong>Café Motivation du 14 février 2026</strong>. Une seule inscription pour les deux événements GO'UP.
-                </p>
-              </div>
             </div>
 
             <!-- Bouton de paiement amélioré -->
@@ -250,12 +242,6 @@
 
     // Ajouter le total dans la description
     document.getElementById('ticketDesc').textContent = ticket.desc + totalText;
-
-    // Afficher / masquer l'explication Formation Soft Skills
-    const softSkillsBlock = document.getElementById('softSkillsExplanation');
-    if (softSkillsBlock) {
-      softSkillsBlock.classList.toggle('d-none', selected !== 'SOFT_SKILLS');
-    }
   }
 
   // Initialisation
