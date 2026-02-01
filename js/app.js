@@ -6,6 +6,21 @@ $(document).ready(function() {
         { type: "SOFT_SKILLS", prix: 10000 }
     ];
 
+    // Mise à jour du montant à payer quand on change le ticket ou la quantité
+    function updateMontantAPayer() {
+        const type_ticket = $("#type_ticket").val();
+        const quantite = parseInt($("#quantite").val(), 10) || 1;
+        const ticketInfo = tickets.find(t => t.type === type_ticket);
+
+        if (ticketInfo && quantite > 0) {
+            const total = ticketInfo.prix * quantite;
+            $("#montantAPayer").text(total.toLocaleString('fr-FR') + ' F CFA');
+        }
+    }
+
+    $("#type_ticket").change(updateMontantAPayer);
+    $("#quantite").on('input', updateMontantAPayer);
+
     $("#payer").click(function() {
         const nom = $("#nom").val();
         const tel = $("#telephone").val();
@@ -34,8 +49,11 @@ $(document).ready(function() {
         // Sauvegarde du ticket dans localStorage via notre "API" (tickets.js)
         const ticket = saveTicket({ nom, tel, type_ticket, prix, quantite, total });
 
-        // Redirection vers Wave pour le paiement
-        const waveUrl = "https://pay.wave.com/m/M_sn_mw86fQUtQu1n/c/sn/";
+        // Redirection vers Wave pour le paiement avec le montant
+        const waveUrl = "https://pay.wave.com/m/M_sn_CSkOL0l-YzKN/c/sn/?amount=" + total;
         window.location.href = waveUrl;
     });
+
+    // Initialisation du montant au chargement
+    updateMontantAPayer();
 });
