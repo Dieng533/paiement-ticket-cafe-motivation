@@ -88,15 +88,20 @@
 }
 
 .countdown-display .countdown-item {
-    background: white;
+    background: var(--orange-goup);
+    color: white;
+    font-weight: bold;
     min-width: 80px;
     transition: all 0.3s ease;
     border: 2px solid transparent;
 }
 
 .countdown-display .countdown-item:hover {
-    border-color: var(--orange-goup);
+    border-color: var(--blanc-creme);
     transform: translateY(-3px);
+}
+#countdown{
+    color: white;
 }
 
 /* Icônes flottantes */
